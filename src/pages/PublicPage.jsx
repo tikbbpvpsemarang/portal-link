@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LinkService } from '../services/LinkService';
-import bgBuilding from '../assets/background.jpg';
+import bgBuilding from '../assets/bbpvp.jpeg';
 import { 
   Video, 
   ClipboardCheck, 
