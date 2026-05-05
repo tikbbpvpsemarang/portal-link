@@ -185,10 +185,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Security Settings */}
-            <div className="glass p-6 rounded-2xl">
+            <div className="glass p-6 rounded-2xl border-t-2 border-red-500/20">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Lock size={18} className="text-red-400" />
-                Keamanan
+                Keamanan Akses
               </h2>
               <form 
                 onSubmit={async (e) => {
@@ -204,90 +204,65 @@ export default function AdminDashboard() {
                 }} 
                 className="space-y-4"
               >
-                <input 
-                  type="password" 
-                  name="password"
-                  required
-                  placeholder="Password Baru"
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-red-500 outline-none text-sm"
-                />
-                <button type="submit" className="w-full bg-slate-800 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-sm transition-all border border-slate-700">
-                  Ganti Password
-                </button>
-              </form>
-            </div>
-
-            {/* Security Settings */}
-            <div className="glass p-6 rounded-2xl">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Lock size={18} className="text-red-400" />
-                Keamanan
-              </h2>
-              <form 
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const newPass = e.target.password.value;
-                  if (window.confirm('Yakin ingin mengganti password admin?')) {
-                    const success = await LinkService.updateAdminPassword(newPass);
-                    if (success) {
-                      alert('Password berhasil diganti!');
-                      e.target.reset();
-                    }
-                  }
-                }} 
-                className="space-y-4"
-              >
-                <input 
-                  type="password" 
-                  name="password"
-                  required
-                  placeholder="Password Baru"
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-red-500 outline-none text-sm"
-                />
-                <button type="submit" className="w-full bg-slate-800 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-sm transition-all border border-slate-700">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Password Baru</label>
+                  <input 
+                    type="password" 
+                    name="password"
+                    required
+                    placeholder="Minimal 6 karakter..."
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-red-500 outline-none text-sm transition-all"
+                  />
+                </div>
+                <button type="submit" className="w-full bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white font-bold py-2.5 rounded-xl text-sm transition-all border border-red-500/20 shadow-lg shadow-red-900/10">
                   Ganti Password
                 </button>
               </form>
             </div>
 
             {/* Add/Edit Link Form */}
-            <div className="glass p-6 rounded-2xl">
+            <div className="glass p-6 rounded-2xl border-t-2 border-green-500/20">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 {isEditing ? <Edit2 size={18} className="text-yellow-400" /> : <Plus size={18} className="text-green-400" />}
-                {isEditing ? 'Edit Link' : 'Tambah Link'}
+                {isEditing ? 'Edit Link' : 'Tambah Link Baru'}
               </h2>
               <form onSubmit={handleSave} className="space-y-4">
-                <input 
-                  type="text" required placeholder="Nama Link"
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  value={currentLink.title}
-                  onChange={(e) => setCurrentLink({...currentLink, title: e.target.value})}
-                />
-                <input 
-                  type="url" required placeholder="URL (https://...)"
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  value={currentLink.url}
-                  onChange={(e) => setCurrentLink({...currentLink, url: e.target.value})}
-                />
-                <select 
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  value={currentLink.icon}
-                  onChange={(e) => setCurrentLink({...currentLink, icon: e.target.value})}
-                >
-                  {Object.keys(iconOptions).map(iconName => (
-                    <option key={iconName} value={iconName}>{iconName}</option>
-                  ))}
-                </select>
-                <div className="flex gap-2">
-                  <button type="submit" className="flex-1 bg-blue-600 text-white font-bold py-2 rounded-lg text-sm">
-                    {isEditing ? 'Update' : 'Simpan'}
+                <div className="space-y-3">
+                  <input 
+                    type="text" required placeholder="Nama Link"
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
+                    value={currentLink.title}
+                    onChange={(e) => setCurrentLink({...currentLink, title: e.target.value})}
+                  />
+                  <input 
+                    type="url" required placeholder="URL (https://...)"
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
+                    value={currentLink.url}
+                    onChange={(e) => setCurrentLink({...currentLink, url: e.target.value})}
+                  />
+                  <select 
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all appearance-none cursor-pointer"
+                    value={currentLink.icon}
+                    onChange={(e) => setCurrentLink({...currentLink, icon: e.target.value})}
+                  >
+                    {Object.keys(iconOptions).map(iconName => (
+                      <option key={iconName} value={iconName}>{iconName}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-blue-900/30 transition-all">
+                    {isEditing ? 'Update Link' : 'Simpan Link'}
                   </button>
                   {isEditing && (
-                    <button type="button" onClick={resetForm} className="bg-slate-800 p-2 rounded-lg"><X size={18} /></button>
+                    <button type="button" onClick={resetForm} className="bg-slate-800 p-2.5 rounded-xl border border-slate-700 hover:bg-slate-700 transition-all">
+                      <X size={20} className="text-slate-400" />
+                    </button>
                   )}
                 </div>
               </form>
             </div>
+
           </div>
 
           {/* Right Column: Link List */}
