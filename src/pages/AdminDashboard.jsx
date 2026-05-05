@@ -37,6 +37,9 @@ export default function AdminDashboard() {
   const [currentLink, setCurrentLink] = useState({ title: '', url: '', icon: 'Globe', subtitle: '' });
   const [settings, setSettings] = useState({ mainTitle: '', subTitle: '', description: '' });
   const [messageCount, setMessageCount] = useState(0);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,6 +75,23 @@ export default function AdminDashboard() {
     e.preventDefault();
     await LinkService.saveSettings(settings);
     alert('Pengaturan berhasil disimpan!');
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (!newPassword) return;
+    
+    setIsUpdating(true);
+    const success = await LinkService.updateAdminPassword(newPassword);
+    setIsUpdating(false);
+
+    if (success) {
+      alert('Password berhasil diperbarui! Silakan gunakan password baru saat login berikutnya.');
+      setIsSecurityModalOpen(false);
+      setNewPassword('');
+    } else {
+      alert('Gagal memperbarui password. Pastikan tabel admin_auth sudah siap di Supabase.');
+    }
   };
 
   const handleEdit = (link) => {
@@ -115,6 +135,13 @@ export default function AdminDashboard() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsSecurityModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-all border border-slate-700"
+            >
+              <Lock size={18} className="text-red-400" />
+              Keamanan
+            </button>
             <Link 
               to="/" 
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-all border border-slate-700"
@@ -134,12 +161,12 @@ export default function AdminDashboard() {
 
         {/* Quick Nav Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="glass p-6 rounded-2xl border-l-4 border-blue-500">
+          <div className="glass p-6 rounded-2xl border-l-4 border-blue-500 shadow-xl">
             <h3 className="text-slate-400 font-bold text-xs uppercase mb-1 tracking-wider">Kelola Link</h3>
             <p className="text-2xl font-black text-white">{links.length} Link Aktif</p>
           </div>
           
-          <Link to="/admin/messages" className="glass p-6 rounded-2xl border-l-4 border-cyan-500 hover:bg-white/5 transition-all group">
+          <Link to="/admin/messages" className="glass p-6 rounded-2xl border-l-4 border-cyan-500 hover:bg-white/5 transition-all group shadow-xl">
             <h3 className="text-slate-400 font-bold text-xs uppercase mb-1 tracking-wider">Pesan Peserta</h3>
             <div className="flex items-center justify-between">
               <p className="text-2xl font-black text-white">{messageCount} Pesan</p>
@@ -147,7 +174,7 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-          <div className="glass p-6 rounded-2xl border-l-4 border-indigo-500">
+          <div className="glass p-6 rounded-2xl border-l-4 border-indigo-500 shadow-xl">
             <h3 className="text-slate-400 font-bold text-xs uppercase mb-1 tracking-wider">Status Sistem</h3>
             <p className="text-2xl font-black text-green-400 uppercase">Online</p>
           </div>
@@ -158,7 +185,7 @@ export default function AdminDashboard() {
           {/* Left Column: Settings & Form */}
           <div className="lg:col-span-1 space-y-6">
             {/* Site Settings */}
-            <div className="glass p-6 rounded-2xl">
+            <div className="glass p-6 rounded-2xl border-t-2 border-blue-500/20 shadow-xl">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Settings size={18} className="text-blue-400" />
                 Info Portal
@@ -166,62 +193,26 @@ export default function AdminDashboard() {
               <form onSubmit={handleSettingsSave} className="space-y-4">
                 <input 
                   type="text" 
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
                   value={settings.mainTitle}
                   onChange={(e) => setSettings({...settings, mainTitle: e.target.value})}
                   placeholder="Judul Utama"
                 />
                 <input 
                   type="text" 
-                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
                   value={settings.subTitle}
                   onChange={(e) => setSettings({...settings, subTitle: e.target.value})}
                   placeholder="Sub Judul"
                 />
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg text-sm transition-all">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-900/30">
                   Update Info
                 </button>
               </form>
             </div>
 
-            {/* Security Settings */}
-            <div className="glass p-6 rounded-2xl border-t-2 border-red-500/20">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Lock size={18} className="text-red-400" />
-                Keamanan Akses
-              </h2>
-              <form 
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const newPass = e.target.password.value;
-                  if (window.confirm('Yakin ingin mengganti password admin?')) {
-                    const success = await LinkService.updateAdminPassword(newPass);
-                    if (success) {
-                      alert('Password berhasil diganti!');
-                      e.target.reset();
-                    }
-                  }
-                }} 
-                className="space-y-4"
-              >
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Password Baru</label>
-                  <input 
-                    type="password" 
-                    name="password"
-                    required
-                    placeholder="Minimal 6 karakter..."
-                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-red-500 outline-none text-sm transition-all"
-                  />
-                </div>
-                <button type="submit" className="w-full bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white font-bold py-2.5 rounded-xl text-sm transition-all border border-red-500/20 shadow-lg shadow-red-900/10">
-                  Ganti Password
-                </button>
-              </form>
-            </div>
-
             {/* Add/Edit Link Form */}
-            <div className="glass p-6 rounded-2xl border-t-2 border-green-500/20">
+            <div className="glass p-6 rounded-2xl border-t-2 border-green-500/20 shadow-xl">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 {isEditing ? <Edit2 size={18} className="text-yellow-400" /> : <Plus size={18} className="text-green-400" />}
                 {isEditing ? 'Edit Link' : 'Tambah Link Baru'}
@@ -288,7 +279,7 @@ export default function AdminDashboard() {
                               className={`glass p-4 rounded-2xl flex items-center justify-between group transition-all ${snapshot.isDragging ? 'shadow-2xl border-blue-500/50 bg-blue-600/10 scale-[1.02] z-50' : 'hover:bg-white/5'}`}
                             >
                               <div className="flex items-center gap-4">
-                                <div {...provided.dragHandleProps} className="p-1 text-slate-600 hover:text-slate-300">
+                                <div {...provided.dragHandleProps} className="p-1 text-slate-600 hover:text-slate-300 cursor-grab active:cursor-grabbing">
                                   <GripVertical size={20} />
                                 </div>
                                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
@@ -301,7 +292,7 @@ export default function AdminDashboard() {
                               </div>
                               <div className="flex items-center gap-2">
                                 <button onClick={() => handleEdit(link)} className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500 hover:text-white transition-all"><Edit2 size={14} /></button>
-                                <button onClick={() => handleDelete(link.id)} className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>
+                                <button onClick={() => handleDelete(link.id)} className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-600 hover:text-white transition-all"><Trash2 size={14} /></button>
                               </div>
                             </div>
                           )}
@@ -317,6 +308,59 @@ export default function AdminDashboard() {
 
         </div>
       </div>
+
+      {/* Security Modal */}
+      {isSecurityModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setIsSecurityModalOpen(false)}></div>
+          <div className="glass w-full max-w-md p-8 rounded-[2.5rem] relative z-10 border-t-4 border-red-500 shadow-2xl animate-in zoom-in duration-300">
+            <button 
+              onClick={() => setIsSecurityModalOpen(false)}
+              className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 text-slate-400 transition-all"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500/30">
+                <Lock className="text-red-400 w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-black text-white uppercase tracking-tight">Ganti Password</h2>
+              <p className="text-slate-400 text-sm mt-1">Gunakan password yang kuat dan unik</p>
+            </div>
+
+            <form onSubmit={handlePasswordChange} className="space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Password Baru</label>
+                <input 
+                  type="password" 
+                  autoFocus
+                  required
+                  placeholder="Masukkan password baru..."
+                  className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3.5 px-4 text-white focus:ring-2 focus:ring-red-500 outline-none transition-all placeholder:text-slate-700 font-medium"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isUpdating || !newPassword}
+                className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-xl shadow-red-900/40"
+              >
+                {isUpdating ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    SIMPAN PASSWORD
+                    <Save size={18} className="group-hover:scale-110 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
