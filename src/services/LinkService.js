@@ -126,9 +126,18 @@ export const LinkService = {
       .from('admin_auth')
       .select('password')
       .eq('id', 1)
-      .single();
+      .maybeSingle(); // Gunakan maybeSingle agar lebih aman
     
-    if (error || !data) return 'admin123';
+    if (error) {
+      console.error('Error fetching password:', error);
+      return 'admin123'; // Fallback jika DB error
+    }
+    
+    if (!data) {
+      console.warn('No password found in DB, using default.');
+      return 'admin123';
+    }
+    
     return data.password;
   },
 
