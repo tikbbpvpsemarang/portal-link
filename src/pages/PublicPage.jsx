@@ -54,15 +54,8 @@ export default function PublicPage() {
     setTimeout(() => setSubmitted(false), 3000);
   };
 
-  const dynamicBgStyle = settings.backgroundImage 
-    ? { backgroundImage: `linear-gradient(to bottom, rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)), url(${settings.backgroundImage})` }
-    : {};
-
   return (
-    <div 
-      className="min-h-screen public-bg text-white flex flex-col items-center justify-start p-6 md:p-12 overflow-x-hidden relative"
-      style={dynamicBgStyle}
-    >
+    <div className="min-h-screen public-bg text-white flex flex-col items-center justify-start p-6 md:p-12 overflow-x-hidden relative">
       
       {/* Admin Quick Access */}
       <Link 
