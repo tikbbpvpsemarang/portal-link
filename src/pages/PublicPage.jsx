@@ -68,31 +68,14 @@ export default function PublicPage() {
 
       {/* Header Section */}
       <header className="w-full max-w-4xl flex flex-col items-center mb-16 text-center relative z-10 pt-8 animate-in fade-in slide-in-from-top-4 duration-1000">
-        <h2 className="text-blue-300 font-bold tracking-[0.2em] text-xs uppercase mb-6 drop-shadow-sm">Portal Pelatihan Terpadu</h2>
-        
-        <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <img 
-              src={bgBuilding} 
-              alt="BBPVP Building" 
-              className="relative w-24 h-24 md:w-32 md:h-32 object-cover rounded-2xl border-2 border-white/10 shadow-2xl"
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          </div>
-          <div className="flex flex-col items-center md:items-start">
-            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter drop-shadow-2xl">
-              {settings.mainTitle}
-            </h1>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-sm font-bold mt-3 backdrop-blur-sm">
-              <Cpu className="w-4 h-4 animate-pulse" />
-              {settings.subTitle}
-            </div>
-          </div>
+        <h2 className="text-blue-300 font-bold tracking-[0.2em] text-xs uppercase mb-3 drop-shadow-sm">Portal Pelatihan Terpadu</h2>
+        <h1 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter drop-shadow-2xl">
+          {settings.mainTitle}
+        </h1>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-sm font-bold mb-6 backdrop-blur-sm">
+          <Cpu className="w-4 h-4 animate-pulse" />
+          {settings.subTitle}
         </div>
-
         <p className="text-white/90 text-sm md:text-base max-w-md leading-relaxed font-medium">
           {settings.description}
         </p>
