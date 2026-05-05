@@ -205,6 +205,13 @@ export default function AdminDashboard() {
                   onChange={(e) => setSettings({...settings, subTitle: e.target.value})}
                   placeholder="Sub Judul"
                 />
+                <input 
+                  type="text" 
+                  className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
+                  value={settings.backgroundImage || ''}
+                  onChange={(e) => setSettings({...settings, backgroundImage: e.target.value})}
+                  placeholder="URL Foto Background (Opsional)"
+                />
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-900/30">
                   Update Info
                 </button>
