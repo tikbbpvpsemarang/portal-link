@@ -23,11 +23,9 @@ body {
 }
 
 .mesh-gradient {
+  background-color: #020617;
   background-image: 
-    linear-gradient(to bottom, rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.95)),
-    url('./assets/background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+    radial-gradient(at 0% 0%, hsla(217,100%,15%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(210,100%,10%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(220,100%,20%,1) 0, transparent 50%);
 }
