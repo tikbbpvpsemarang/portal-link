@@ -226,6 +226,12 @@ export default function AdminDashboard() {
                     onChange={(e) => setCurrentLink({...currentLink, title: e.target.value})}
                   />
                   <input 
+                    type="text" placeholder="Subjudul (Opsional)"
+                    className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
+                    value={currentLink.subtitle}
+                    onChange={(e) => setCurrentLink({...currentLink, subtitle: e.target.value})}
+                  />
+                  <input 
                     type="url" required placeholder="URL (https://...)"
                     className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
                     value={currentLink.url}
