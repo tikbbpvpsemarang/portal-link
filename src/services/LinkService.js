@@ -133,12 +133,15 @@ export const LinkService = {
   },
 
   updateAdminPassword: async (newPassword) => {
+    // Gunakan update saja karena kita sudah yakin id 1 ada
     const { error } = await supabase
       .from('admin_auth')
-      .upsert({ id: 1, password: newPassword });
+      .update({ password: newPassword })
+      .eq('id', 1);
     
     if (error) {
-      console.error('Error updating password:', error);
+      console.error('Supabase Error:', error);
+      alert('Error dari Supabase: ' + error.message); // Biar kita tahu persis masalahnya
       return false;
     }
     return true;
