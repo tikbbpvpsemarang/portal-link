@@ -18,7 +18,9 @@ import {
   GripVertical,
   MessageSquare,
   ArrowRight,
-  Lock
+  Lock,
+  Image as ImageIcon,
+  Loader2
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -40,6 +42,7 @@ export default function AdminDashboard() {
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isUploadingBg, setIsUploadingBg] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +60,22 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     sessionStorage.removeItem('isAdminAuthenticated');
     navigate('/login');
+  };
+
+  const handleBgUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploadingBg(true);
+    const publicUrl = await LinkService.uploadBackground(file);
+    setIsUploadingBg(false);
+
+    if (publicUrl) {
+      setSettings({ ...settings, backgroundImage: publicUrl });
+      alert('Background berhasil diganti! Cek halaman publik untuk melihat hasilnya.');
+    } else {
+      alert('Gagal upload background. Pastikan bucket "backgrounds" sudah Public di Supabase.');
+    }
   };
 
   const handleSave = async (e) => {
@@ -205,6 +224,16 @@ export default function AdminDashboard() {
                   onChange={(e) => setSettings({...settings, subTitle: e.target.value})}
                   placeholder="Sub Judul"
                 />
+                
+                <div className="pt-2">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Kustom Background</label>
+                  <label className="flex items-center justify-center gap-2 w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-xs border border-slate-800 cursor-pointer transition-all border-dashed">
+                    {isUploadingBg ? <Loader2 className="animate-spin" size={16} /> : <ImageIcon size={16} className="text-blue-400" />}
+                    {isUploadingBg ? 'Sedang Upload...' : 'Ganti Foto Background'}
+                    <input type="file" className="hidden" accept="image/*" onChange={handleBgUpload} />
+                  </label>
+                </div>
+
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-blue-900/30">
                   Update Info
                 </button>

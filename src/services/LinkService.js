@@ -151,6 +151,34 @@ export const LinkService = {
       return false;
     }
     return true;
+  },
+
+  uploadBackground: async (file) => {
+    const fileName = `bg-${Date.now()}.${file.name.split('.').pop()}`;
+    
+    // 1. Upload ke Storage
+    const { data, error } = await supabase.storage
+      .from('backgrounds')
+      .upload(fileName, file);
+
+    if (error) {
+      console.error('Storage Upload Error:', error);
+      return null;
+    }
+
+    // 2. Ambil Link Publik-nya
+    const { data: { publicUrl } } = supabase.storage
+      .from('backgrounds')
+      .getPublicUrl(fileName);
+
+    // 3. Update ke tabel settings
+    const { data: settings } = await supabase.from('settings').select('*').limit(1).maybeSingle();
+    await supabase.from('settings').upsert({ 
+      id: settings ? settings.id : 1, 
+      backgroundImage: publicUrl 
+    });
+    
+    return publicUrl;
   }
 };
 
