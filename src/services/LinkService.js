@@ -122,35 +122,32 @@ export const LinkService = {
   },
 
   getAdminPassword: async () => {
+    // Ambil baris pertama yang ada di tabel, tidak peduli ID-nya berapa
     const { data, error } = await supabase
       .from('admin_auth')
       .select('password')
-      .eq('id', 1)
-      .maybeSingle(); // Gunakan maybeSingle agar lebih aman
+      .limit(1)
+      .maybeSingle();
     
     if (error) {
       console.error('Error fetching password:', error);
-      return 'admin123'; // Fallback jika DB error
-    }
-    
-    if (!data) {
-      console.warn('No password found in DB, using default.');
       return 'admin123';
     }
     
-    return data.password;
+    return data ? data.password : 'admin123';
   },
 
   updateAdminPassword: async (newPassword) => {
-    // Gunakan update saja karena kita sudah yakin id 1 ada
+    // Ambil ID baris pertama dulu
+    const { data: firstRow } = await supabase.from('admin_auth').select('id').limit(1).maybeSingle();
+    const targetId = firstRow ? firstRow.id : 1;
+
     const { error } = await supabase
       .from('admin_auth')
-      .update({ password: newPassword })
-      .eq('id', 1);
+      .upsert({ id: targetId, password: newPassword });
     
     if (error) {
       console.error('Supabase Error:', error);
-      alert('Error dari Supabase: ' + error.message); // Biar kita tahu persis masalahnya
       return false;
     }
     return true;
