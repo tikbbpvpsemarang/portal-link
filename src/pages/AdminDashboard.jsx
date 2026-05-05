@@ -183,6 +183,39 @@ export default function AdminDashboard() {
               </form>
             </div>
 
+            {/* Security Settings */}
+            <div className="glass p-6 rounded-2xl">
+              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Lock size={18} className="text-red-400" />
+                Keamanan
+              </h2>
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const newPass = e.target.password.value;
+                  if (window.confirm('Yakin ingin mengganti password admin?')) {
+                    const success = await LinkService.updateAdminPassword(newPass);
+                    if (success) {
+                      alert('Password berhasil diganti!');
+                      e.target.reset();
+                    }
+                  }
+                }} 
+                className="space-y-4"
+              >
+                <input 
+                  type="password" 
+                  name="password"
+                  required
+                  placeholder="Password Baru"
+                  className="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-red-500 outline-none text-sm"
+                />
+                <button type="submit" className="w-full bg-slate-800 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-sm transition-all border border-slate-700">
+                  Ganti Password
+                </button>
+              </form>
+            </div>
+
             {/* Add/Edit Link Form */}
             <div className="glass p-6 rounded-2xl">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">

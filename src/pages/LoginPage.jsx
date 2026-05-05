@@ -1,21 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { Lock, ShieldCheck, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { LinkService } from '../services/LinkService';
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simple password check (can be improved with a backend later)
-    if (password === 'admin123') {
-      sessionStorage.setItem('isAdminAuthenticated', 'true');
-      navigate('/admin');
-    } else {
-      setError('Password salah! Silakan coba lagi.');
-      setPassword('');
+    setLoading(true);
+    
+    try {
+      const adminPassword = await LinkService.getAdminPassword();
+      
+      if (password === adminPassword) {
+        sessionStorage.setItem('isAdminAuthenticated', 'true');
+        navigate('/admin');
+      } else {
+        setError('Password salah! Silakan coba lagi.');
+        setPassword('');
+      }
+    } catch (err) {
+      setError('Gagal terhubung ke database.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,10 +76,17 @@ export default function LoginPage() {
 
             <button 
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-blue-900/40"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-blue-900/40"
             >
-              LOG IN
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  LOG IN
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
         </div>

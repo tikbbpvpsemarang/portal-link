@@ -119,6 +119,30 @@ export const LinkService = {
       .eq('id', id);
 
     if (error) console.error('Error deleting message:', error);
+  },
+
+  getAdminPassword: async () => {
+    const { data, error } = await supabase
+      .from('admin_auth')
+      .select('password')
+      .eq('id', 1)
+      .single();
+    
+    if (error || !data) return 'admin123';
+    return data.password;
+  },
+
+  updateAdminPassword: async (newPassword) => {
+    const { error } = await supabase
+      .from('admin_auth')
+      .upsert({ id: 1, password: newPassword });
+    
+    if (error) {
+      console.error('Error updating password:', error);
+      return false;
+    }
+    return true;
   }
 };
+
 
